@@ -31,6 +31,8 @@ public class FirstTvNetTest {
 
 
         wait.until(ExpectedConditions.presenceOfElementLocated(ACCEPT_COOKIES_BTN));
+
+
 //        WebElement acceptButton = browserWindow.findElement(ACCEPT_COOKIES_BTN); //Find element
 //        acceptButton.click();//Click btn(element)
 
