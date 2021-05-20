@@ -1,3 +1,5 @@
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -15,15 +17,22 @@ public class DelfiArticleCommentsTest {
     private final By TITLE = By.xpath(".//article[contains(@class,'headline')]");
     private final By COMMENTS =By.xpath(".//a[@class='comment-count text-red-ribbon']");
 
+    private final Logger LOGGER = LogManager.getLogger(DelfiArticleCommentsTest.class);
+
     @Test
     public void titleAndCommentsCountCheck() {
+        LOGGER.info("This test is checking titles and coments count on home/article.comments pages");
+        LOGGER.info("Setting driver location");
         System.setProperty("webdriver.chrome.driver", "/Users/iMac/chromedriver");
+        LOGGER.info("Open Chrome browser");
         WebDriver driver = new ChromeDriver();
+        LOGGER.info("Maximize window");
         driver.manage().window().maximize();
-
+        LOGGER.info("Go to Delfi.lv");
         driver.get("http://delfi.lv");
-
+        LOGGER.info("Wait for button");
         WebDriverWait wait = new WebDriverWait(driver, 10);
+        LOGGER.info("Click advert btn");
         wait.until(ExpectedConditions.elementToBeClickable(ACCEPT_COOKIES_BTN)).click();
 
 //        List<WebElement> titles = driver.findElements(HEADERS);
@@ -53,4 +62,4 @@ public class DelfiArticleCommentsTest {
 
         }
     }
-}
+
