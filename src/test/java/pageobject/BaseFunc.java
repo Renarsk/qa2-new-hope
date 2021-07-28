@@ -1,4 +1,4 @@
-package pageobject.pages;
+package pageobject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,6 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
@@ -60,6 +61,11 @@ public class BaseFunc {
         return wait.until(ExpectedConditions.presenceOfNestedElementLocatedBy(parent, child)).getText();
     }
 
+    public String getText(By parent, By child) {
+        return wait.until(ExpectedConditions.presenceOfNestedElementLocatedBy(parent, child)).getText();
+
+    }
+
     public String getText(By locator) {
         LOGGER.info("Getting text from web element");
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator)).getText();
@@ -71,5 +77,28 @@ public class BaseFunc {
             driver.close();
         }
 
+    }
+
+    public WebElement findElement(By locator) {
+        LOGGER.info("Getting element by locator:" + locator);
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+    }
+
+    public void select(By dropdown, String text) {
+        LOGGER.info("Selecting " + text + " from dropdown by locator: " + dropdown);
+        Select select = new Select(findElement(dropdown));
+        select.selectByVisibleText(text);
+    }
+
+    public void type(By locator, String text) {
+        LOGGER.info("Typing " + text + " info " + locator);
+        WebElement input = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        input.clear();
+        input.sendKeys(text);
+
+    }
+
+    public void type(By locator, int text) {
+        type(locator, String.valueOf(text));
     }
 }
