@@ -1,9 +1,11 @@
 package stepdefs;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import model.Reservation;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.WebElement;
 import pageobject.BaseFunc;
@@ -11,6 +13,7 @@ import pageobject.tickets.pages.HomePage;
 import pageobject.tickets.pages.PassengerInfoPage;
 import pageobject.tickets.pages.SeatsPage;
 import pageobject.tickets.pages.SuccessPage;
+import requesters.TicketRequester;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,6 +28,7 @@ public class TicketsStepDefs {
     private PassengerInfoPage infoPage;
     private SeatsPage seatsPage;
     private SuccessPage successPage;
+    private List<Reservation> reservations;
 
     @Given("flight from {string} to {string}")
     public void set_Airports(String from, String to) {
@@ -78,7 +82,7 @@ public class TicketsStepDefs {
         Assertions.assertEquals(given.getName(), infoPage.getName(), "Wrong name");
     }
 
-    @Then("price calculated is: (.*)")
+    @Then("price calculated is: {}")
     public void check_price(BigDecimal price) {
         Assertions.assertEquals(price, infoPage.getPrice(), "Wrong price");
     }
@@ -107,6 +111,32 @@ public class TicketsStepDefs {
 
     @Then("success message appears")
     public void check_success_msg() {
-        Assertions.assertEquals("Thank you for flying with us!", successPage.getMessage(), "Cant find success message!");
+        Assertions.assertEquals("Thank You for flying with us!", successPage.getMessage(), "Cant find success message!");
     }
+
+    @When("we are requesting reservations via API")
+    public void request_reservations() throws JsonProcessingException {
+        TicketRequester requester = new TicketRequester();
+        reservations = requester.getReservations();
+    }
+
+    @Then("our reservation with correct data appears")
+    public void check_reservation() {
+        Reservation actual = null;
+
+        for (Reservation r : reservations) {
+            if (r.getName().equals(given.getName())) {
+                actual = r;
+                break;
+            }
+
+        }
+
+        Assertions.assertNotNull(actual, "Cant find reservations");
+
+        Assertions.assertEquals(given.getSurname(), actual.getSurname(), "Wrong Surname");
+        Assertions.assertEquals(Integer.parseInt(StringUtils.substringBefore(given.getFullDate(), "-")), actual.getFlight(), "Error message");
+
+    }
+
 }

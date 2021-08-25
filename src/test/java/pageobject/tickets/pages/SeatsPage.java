@@ -12,8 +12,8 @@ public class SeatsPage {
 
     private final By BOOKING_COMPLETE = By.id("book3");
     private final By SEAT = By.xpath(".//div[@class = 'seat']");
-    private final By SEAT_NR = By.xpath("");
-    private final By BOOK_BTN = By.id("book2");
+    private final By SEAT_NR = By.xpath(".//div[@class = 'line']");
+    private final By BOOK_BTN = By.id("book3");
 
 
     private BaseFunc baseFunc;
@@ -22,13 +22,21 @@ public class SeatsPage {
         this.baseFunc = baseFunc;
     }
 
-    public void selectSeat(int nr) {
+    public SeatsPage selectSeat(int nr) {
         WebElement seat = findSeat(nr);
         Assertions.assertNotNull(seat, "Cant find nr " + nr);
+        baseFunc.click(seat);
+        return this;
     }
 
     public int getSeatNr() {
         return Integer.parseInt(StringUtils.substringAfterLast(baseFunc.getText(SEAT_NR), "is: "));
+    }
+
+    public SeatsPage checkIfSelectedSeatIs(int nr){
+        Assertions.assertEquals(nr, getSeatNr(), "Wrong seat nr");
+
+        return this;
     }
 
     public SuccessPage book(){
@@ -37,6 +45,7 @@ public class SeatsPage {
     }
 
     private WebElement findSeat(int nr) {
+        baseFunc.waitForElementsCountToBeMoreThan(SEAT, 10);
         for (WebElement we : baseFunc.findElements(SEAT)) {
             if (Integer.parseInt(we.getText()) == nr) {
                 return we;
